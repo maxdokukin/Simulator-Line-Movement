@@ -1,39 +1,27 @@
 
-Path [] paths;
-Traveler [] travelers;
+Path path;
+Traveler traveler;
 
 void setup() {
-  paths = new Path[1];
-  travelers = new Traveler[1];
 
-  paths[0] = new Path(color(255, 0, 0));
+  path = new Path(color(255, 0, 0));
 
-  for (int k = 0; k < 3; k++) {
-    paths[k].add_point(50, 50 + k * 200);
-    paths[k].add_point(150, 50 + k * 200);
-    paths[k].add_point(300, 150 + k * 200);
-    paths[k].add_point(400, 150 + k * 200);
-    paths[k].add_point(400, 50 + k * 200);
-    paths[k].add_point(300, 50 + k * 200);
-    paths[k].add_point(150, 150 + k * 200);
-    paths[k].add_point(50, 150 + k * 200);
-    paths[k].make_a_loop();
-  }
+  path.add_segment(new LineSegment(0, new PVector(50, 50), new PVector(100, 50)));
+  path.add_segment(new ArcSegment(1, new PVector(100, 50), new PVector(150, 100), 50, true));
+  path.add_segment(new ArcSegment(2, new PVector(150, 100), new PVector(200, 150), 50, false));
+  path.add_segment(new LineSegment(3, new PVector(200, 150), new PVector(250, 150)));
 
-  travelers[0] = new Traveler(paths[0], 1, color(0, 255, 0));
-  travelers[1] = new Traveler(paths[1], 2, color(0, 0, 255));
-  travelers[2] = new Traveler(paths[2], 3, color(255, 0, 0));
-
+  path.make_a_loop();
+  
+  traveler = new Traveler(path, 1, color(0, 255, 0));
   size(600, 600);
 }
 
 void draw() {
   background(40);
-  for (int k = 0; k < 3; k++) {
-    paths[k].show();
-    travelers[k].show();
-    travelers[k].update();
-  }
+  path.show();
+  traveler.show();
+  traveler.update();
 }
 
 
@@ -43,8 +31,6 @@ void mouseClicked() {
 
 void keyPressed() {
   if (key == 's') {
-    travelers[0] = new Traveler(paths[0], 1, color(0, 255, 0));
-    travelers[1] = new Traveler(paths[1], 2, color(0, 0, 255));
-    travelers[2] = new Traveler(paths[2], 3, color(255, 0, 0));
+    traveler = new Traveler(path, 1, color(0, 255, 0));
   }
 }
