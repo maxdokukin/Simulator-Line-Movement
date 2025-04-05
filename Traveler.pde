@@ -1,40 +1,31 @@
 class Traveler {
-
   Path path;
   float speed;
-  float path_traveled = 0;
-  PVector current_location;
   color col;
   boolean done = false;
-  boolean start = false;
+  boolean start = true;
+  TravelData travel_data;
 
   Traveler(Path path, float speed, color col) {
     this.path = path;
     this.speed = speed;
-    this.current_location = path.get_start_point();
+    this.travel_data = new TravelData(path.get_start_segment(), 0, path.get_start_point());
     this.col = col;
   }
 
   void show() {
     stroke(col);
-    strokeWeight(3);
-    point(current_location.x, current_location.y);
+    strokeWeight(10);
+    point(travel_data.position.x, travel_data.position.y);
   }
 
   void update() {
     if (done || !start)
       return;
 
-    PVector new_position = path.travel(current_location, speed);
+    this.travel_data = path.travel(travel_data, speed);
 
-    if (new_position == null)
-      this.done = true;
-    else
-      this.current_location = new_position;
-  }
-  
-  void reset(){
-    this.current_location = path.get_start_point();
-    this.done = false;
+    if(this.travel_data.segment_progress == -1)
+      done = true;
   }
 }

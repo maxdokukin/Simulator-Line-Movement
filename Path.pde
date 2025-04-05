@@ -1,10 +1,8 @@
 class Path {
 
   ArrayList<PVector> points;
-  color col;
-  float total_path_length = 0;
   ArrayList<Segment> segments;
-  int points_count = 0;
+  color col;
 
   Path(color col) {
     points = new ArrayList<PVector>();
@@ -13,18 +11,21 @@ class Path {
   }
 
   void add_point(float x, float y) {
+    println("add point", x, y);
     points.add(new PVector(x, y));
-    points_count++;
 
-    if (points_count > 1)
-      segments.add(new Segment(points.get(points_count - 2), points.get(points_count - 1), points_count - 2));
-
-    this.total_path_length = get_total_path_length();
-    update_segment_length_shares();
+    if (points.size() > 1){
+      Segment new_segment = new Segment(points.get(points.size() - 2), points.get(points.size() - 1), points.size() - 2);
+      segments.add(new_segment);
+      
+      if(segments.size() > 1){
+        segments.get(segments.size() - 2).next = segments.get(segments.size() - 1);
+      }
+    }
   }
 
   void show() {
-    if (points_count < 2)
+    if (segments.size() < 1)
       return;
 
     stroke(this.col);
@@ -34,49 +35,30 @@ class Path {
     }
   }
 
-  void update_segment_length_shares() {
-    for (Segment s : segments)
-      s.update_share_of_total_length(this.total_path_length);
-  }
-
-  float get_total_path_length() {
-    if (points_count < 2)
-      return 0;
-
-    float total_length = 0;
-    for (Segment s : segments) {
-      total_length += s.length;
-    }
-    return total_length;
-  }
-
   PVector get_start_point() {
     return points.get(0);
   }
+  
+  Segment get_start_segment(){
+    return segments.get(0);
+  }
 
-  PVector travel(PVector current_position, float speed) {
-    Segment current_segment = get_segment(current_position);
-    if (current_segment == null)
-      return null;
-
-    PVector new_position = null;
-    if (current_segment.is_end(current_position)) {
-      if (current_segment.id + 1 < segments.size()) {
-        current_segment = segments.get(current_segment.id + 1);
+  TravelData travel(TravelData travel_data, float speed) {    
+    if(travel_data.segment_progress >= 1){
+      if(travel_data.segment.next == null){
+        //TravelData travel_result = travel_data.segment.travel(1, speed);
+        return new TravelData(null, -1f, travel_data.position);
       } else {
-        return null;
+        return travel_data.segment.next.travel(0, speed);
       }
     }
-    new_position = current_segment.travel(current_position, speed);
     
-    return new_position;
+    return travel_data.segment.travel(travel_data.segment_progress, speed);    
+  }
+  
+  void make_a_loop(){
+    add_point(points.get(0).x, points.get(0).y);
+    segments.get(segments.size() - 1).next = segments.get(0);
   }
 
-
-  Segment get_segment(PVector position) {
-    for (int i = segments.size() - 1; i >= 0; i--)
-      if (segments.get(i).on_segment(position))
-        return segments.get(i);
-    return null;
-  }
 }

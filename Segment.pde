@@ -1,60 +1,28 @@
 class Segment {
 
-  PVector a;
-  PVector b;
-  PVector heading_vector;
+  PVector a, b, heading_vector;
+  Segment next = null;
   int id;
-  String type = "line";
   float length;
-  float on_segment_tolerance = 0.1;
-  float share_of_total_length = 1;
-  Segment next_segment = null;
-  Segment previous_segment = null;
+  String type = "line";
 
   Segment(PVector a, PVector b, int id) {
-
-    this.a = a;
-    this.b = b;
+    this.a = a.copy();
+    this.b = b.copy();
     this.length = dist(a.x, a.y, b.x, b.y);
-    this.heading_vector = new PVector(b.x - a.x, b.y - a.y);
+    this.heading_vector = PVector.sub(this.b, this.a);
     this.id = id;
   }
 
   void show() {
     line(a.x, a.y, b.x, b.y);
   }
-
-  void update_share_of_total_length(float total_path_length) {
-    this.share_of_total_length = this.length / total_path_length;
-  }
-
-  boolean on_segment(PVector position) {
-    float d1 = dist(a.x, a.y, position.x, position.y);
-    float d2 = dist(b.x, b.y, position.x, position.y);
-
-    if (d1 + d2 - this.length <= this.on_segment_tolerance)
-      return true;
-    return false;
-  }
-
-  float get_absolute_segment_position(PVector position) {
-    float d1 = dist(a.x, a.y, position.x, position.y);
-    float d2 = dist(b.x, b.y, position.x, position.y);
-
-    if (d1 + d2 - this.length <= this.on_segment_tolerance)
-      return d1 / this.length;
-    return -1;
-  }
-
-  PVector travel(PVector current_position, float speed) {
+  
+  TravelData travel(float segment_progress, float speed) {
     float relative_speed = speed / length;
-
-    float travel_progress = get_absolute_segment_position(current_position);
-    PVector new_position = a.copy().add(heading_vector.copy().mult(travel_progress + relative_speed));
-    return new_position;
-  }
-
-  boolean is_end(PVector position) {
-    return dist(b.x, b.y, position.x, position.y) == 0;
+    float current_segment_progress_updated = min(segment_progress + relative_speed, 1);
+    PVector current_position_updated = a.copy().add(heading_vector.copy().mult(current_segment_progress_updated));
+    
+    return new TravelData(this, current_segment_progress_updated, current_position_updated);
   }
 }
