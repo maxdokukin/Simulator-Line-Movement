@@ -69,5 +69,14 @@ class Path {
     //add_point(points.get(0).x, points.get(0).y);
     segments.get(segments.size() - 1).next = segments.get(0);
   }
-
+  
+  
+  void highlight_segment(PVector mouse_location){
+    for(Segment s : segments){
+      if(s.is_on(mouse_location))
+        s.selected = true;
+      else
+        s.selected = false;
+    }
+  }
 }

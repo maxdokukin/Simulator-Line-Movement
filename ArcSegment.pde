@@ -32,6 +32,7 @@ class ArcSegment extends Segment{
   }
   
   void show(){
+    strokeWeight(selected ? 5 : 1);
     noFill();
     arc(arc_center.x, arc_center.y, 2 * r, 2 * r, angle_start, angle_stop);
   }
@@ -48,6 +49,37 @@ class ArcSegment extends Segment{
     PVector position_updated = new PVector(arc_center.x + cos(current_angle) * r, arc_center.y + sin(current_angle) * r);
               
     return new TravelData(this, segment_progress_updated, position_updated);    
+  }
+  
+  boolean is_on(PVector point){    
+    PVector center_to_mouse = point.copy().sub(arc_center);
+    float center_to_mouse_angle =  (center_to_mouse.heading() + PI) % TWO_PI;
+    float true_angle_start = (a.copy().sub(arc_center).heading() + PI) % TWO_PI;
+    float true_angle_stop = (b.copy().sub(arc_center).heading() + PI) % TWO_PI;
+    
+    return is_between_angles(center_to_mouse_angle, true_angle_start, true_angle_stop, direction_clockwise) && abs(center_to_mouse.mag() - r) < 10;
+  }
+  
+  boolean is_between_angles(float angle, float angle_start, float angle_stop, boolean direction_clockwise){    
+    if (direction_clockwise){
+      if (angle_start > angle_stop){ // we cross zero point
+        return is_between(angle, 0, angle_stop) || is_between(angle, angle_start, TWO_PI);
+      } else {
+        return is_between(angle, angle_start, angle_stop);
+      }
+    } else {
+      if(angle_start == 0)
+        angle_start = TWO_PI;
+      if (angle_start < angle_stop){
+        return is_between(angle, 0, angle_start) || is_between(angle, angle_stop, TWO_PI);
+      } else {
+        return is_between(angle, angle_stop, angle_start);
+      }
+    }
+  }
+  
+  boolean is_between(float value, float low, float high){
+   return value >= low && value <= high; 
   }
 }
   

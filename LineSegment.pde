@@ -8,6 +8,7 @@ class LineSegment extends Segment {
   }
 
   void show() {
+    strokeWeight(selected ? 5 : 1);
     line(a.x, a.y, b.x, b.y);
   }
   
@@ -17,5 +18,15 @@ class LineSegment extends Segment {
     PVector position_updated = a.copy().add(heading_vector.copy().mult(segment_progress_updated));
     
     return new TravelData(this, segment_progress_updated, position_updated);
+  }
+  
+  boolean is_on(PVector point){
+    float d1 = this.a.dist(point);
+    float d2 = this.b.dist(point);
+    
+    if ((d1 + d2) - length < 1)
+    return true;
+    
+    return false;
   }
 }
