@@ -14,6 +14,8 @@ class Traveler {
   }
 
   void show() {
+    if(travel_data == null || travel_data.position == null)
+      return;
     stroke(col);
     strokeWeight(10);
     point(travel_data.position.x, travel_data.position.y);
@@ -22,9 +24,11 @@ class Traveler {
   void update() {
     if (done || !start)
       return;
-
+    
     this.travel_data = path.travel(travel_data, speed);
-
+    if(travel_data == null)
+      return;
+      
     if(this.travel_data.segment_progress == -1)
       done = true;
   }

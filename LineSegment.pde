@@ -8,8 +8,20 @@ class LineSegment extends Segment {
   }
 
   void show() {
-    strokeWeight(selected ? 5 : 1);
+    stroke(255, 0, 0);
+    strokeWeight(selected ? 5 : 2);
     line(a.x, a.y, b.x, b.y);
+    
+    if(show_a){
+      stroke(0, 255, 0);
+      strokeWeight(10);
+      point(a.x, a.y);
+    }
+    if(show_b){
+      stroke(0, 0, 255);
+      strokeWeight(10);
+      point(b.x, b.y);
+    }
   }
   
   TravelData travel(float segment_progress, float speed) {

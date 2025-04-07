@@ -32,9 +32,21 @@ class ArcSegment extends Segment{
   }
   
   void show(){
-    strokeWeight(selected ? 5 : 1);
+    stroke(255, 0, 0);
+    strokeWeight(selected ? 5 : 2);
     noFill();
-    arc(arc_center.x, arc_center.y, 2 * r, 2 * r, angle_start, angle_stop);
+    arc(arc_center.x, arc_center.y, 2 * r, 2 * r, angle_start, angle_stop);    
+    
+    if(show_a){
+      stroke(0, 255, 0);
+      strokeWeight(10);
+      point(a.x, a.y);
+    }
+    if(show_b){
+      stroke(0, 0, 255);
+      strokeWeight(10);
+      point(b.x, b.y);
+    }
   }
   
   TravelData travel(float segment_progress, float speed){
@@ -57,7 +69,7 @@ class ArcSegment extends Segment{
     float true_angle_start = (a.copy().sub(arc_center).heading() + PI) % TWO_PI;
     float true_angle_stop = (b.copy().sub(arc_center).heading() + PI) % TWO_PI;
     
-    return is_between_angles(center_to_mouse_angle, true_angle_start, true_angle_stop, direction_clockwise) && abs(center_to_mouse.mag() - r) < 10;
+    return is_between_angles(center_to_mouse_angle, true_angle_start, true_angle_stop, direction_clockwise) && abs(center_to_mouse.mag() - r) < 5;
   }
   
   boolean is_between_angles(float angle, float angle_start, float angle_stop, boolean direction_clockwise){    

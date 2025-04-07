@@ -45,14 +45,21 @@ class Path {
   }
 
   PVector get_start_point() {
+    if(segments.size() == 0)
+      return null;
     return segments.get(0).a;
   }
   
   Segment get_start_segment(){
+    if(segments.size() == 0)
+      return null;
     return segments.get(0);
   }
 
   TravelData travel(TravelData travel_data, float speed) {    
+    if(travel_data == null || travel_data.segment == null)
+      return null;
+      
     if(travel_data.segment_progress >= 1){
       if(travel_data.segment.next == null){
         //TravelData travel_result = travel_data.segment.travel(1, speed);
@@ -73,10 +80,15 @@ class Path {
   
   void highlight_segment(PVector mouse_location){
     for(Segment s : segments){
-      if(s.is_on(mouse_location))
+      if(s.is_on(mouse_location)){
+        s.update_endpoints_show_status(mouse_location);
         s.selected = true;
-      else
+      }
+      else{
+        s.reset_endpoints_show_status();
         s.selected = false;
+      }
+        
     }
   }
 }

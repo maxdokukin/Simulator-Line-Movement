@@ -3,7 +3,7 @@ class Segment {
   Segment next = null;
   int id;
   float length;
-  boolean selected = false;
+  boolean selected = false, show_a = false, show_b = false;
   
   Segment(int id, PVector a, PVector b) {
     this.id = id;
@@ -21,5 +21,15 @@ class Segment {
   
   boolean is_on(PVector point){
     return false;
+  }
+  
+  void update_endpoints_show_status(PVector point){
+    show_a = a.dist(point) < 10;
+    show_b = b.dist(point) < 10;
+  }
+  
+  void reset_endpoints_show_status(){
+    show_a = false;
+    show_b = false;
   }
 }
